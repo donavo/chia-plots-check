@@ -1,5 +1,7 @@
 ## chia-plots-check: Check health Plots
 
+Check and output files with poor health
+
 ## Installation
 
 Python 3.7+ is required. Make sure your default python version is >=3.7 by typing python3.
