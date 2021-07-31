@@ -1,6 +1,13 @@
 # WINDOWS EXAMPLE: C:\Users\Son Vo\AppData\Local\chia-blockchain\app-1.2.3\resources\app.asar.unpacked\daemon\chia.exe
 # LINUX EXAMPLE: /usr/lib/chia-blockchain/resources/app.asar.unpacked/daemon/chia
-chia_location: C:\Users\lam-son\AppData\Local\chia-blockchain\app-1.2.3\resources\app.asar.unpacked\daemon\chia.exe
-plots_path: E:\Temp\final\
+chia_location: C:\Users\Son Vo\AppData\Local\chia-blockchain\app-1.2.3\resources\app.asar.unpacked\daemon\chia.exe
+plots_path: S:\final
 report_output_file: output.txt
+# *******************************************************
+# Proofs found Health Point - HP
+#
+# Good health: HP >= 0.8. Set health_point = 0.8
+# Normal     : 0.8 > HPs >= 0.7. Set health_point = 0.79
+# Bad health : HP < 0.7. Set health_point = 0.7
+#********************************************************
 health_point: 0.7
