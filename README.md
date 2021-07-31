@@ -8,7 +8,7 @@ Python 3.7+ is required. Make sure your default python version is >=3.7 by typin
 pyyaml is required.
 
 ```sh
-python3 -m pip install pyyaml
+pip install pyyaml
 cd chia-plots-check
 py CheckHealthPlot.py
 or python3 CheckHealthPlot.py
