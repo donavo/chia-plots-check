@@ -19,7 +19,7 @@ python3 CheckHealthPlot.py
 or py CheckHealthPlot.py
 ```
 
-Release version:
+Release version: https://github.com/donavo/chia-plots-check/releases
 
 
 ## How to Support
