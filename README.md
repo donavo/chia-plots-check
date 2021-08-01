@@ -9,7 +9,8 @@ Check and output files with poor health
 3. Open CommandPrompt / PowerShell / Terminal and cd into the main library folder.
 Example: cd C:\Users\lam-son\Documents\chia-plots-check
 4. Install the required modules: pip install -r requirements.txt
-5. Run: python3 CheckHealthPlot.py
+5. Config: open and edit file config.yaml
+6. Run: python3 CheckHealthPlot.py
 
 ```sh
 pip install -r requirements.txt
