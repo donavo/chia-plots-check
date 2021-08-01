@@ -4,15 +4,22 @@ Check and output files with poor health
 
 ## Installation
 
-Python 3.7+ is required. Make sure your default python version is >=3.7 by typing python3.
-pyyaml is required.
+1. Download and Install Python 3.7 or higher: https://www.python.org/
+2. git clone this repo or download it
+3. Open CommandPrompt / PowerShell / Terminal and cd into the main library folder.
+Example: cd C:\Users\lam-son\Documents\chia-plots-check
+4. Install the required modules: pip install -r requirements.txt
+5. Run: python3 CheckHealthPlot.py
 
 ```sh
-pip install pyyaml
+pip pip install -r requirements.txt
 cd chia-plots-check
-py CheckHealthPlot.py
-or python3 CheckHealthPlot.py
+python3 CheckHealthPlot.py
+or py CheckHealthPlot.py
 ```
+
+Release version:
+
 
 ## How to Support
 XCH: xch1qu4asrccqr7qdh3knltpr7vg3q9urgfcf93v0rze2vy88wc58xjqs0kex9
