@@ -12,7 +12,7 @@ Example: cd C:\Users\lam-son\Documents\chia-plots-check
 5. Run: python3 CheckHealthPlot.py
 
 ```sh
-pip pip install -r requirements.txt
+pip install -r requirements.txt
 cd chia-plots-check
 python3 CheckHealthPlot.py
 or py CheckHealthPlot.py
