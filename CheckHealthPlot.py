@@ -1,7 +1,9 @@
 #! python
 # -*- encoding: utf-8 -*-
 # Author: son-vo
-# Version: 0.1
+# Version:
+# 0.1: Check health plot
+# 0.1.1: Add feature move plot file to backup folder
 ##################################################
 # Check and output health of plots
 # Requirement: install pyyaml
@@ -18,6 +20,17 @@ import signal
 import sys
 import os
 import subprocess as sp
+import shutil
+
+def isValidDirectory(directoryPath):
+    # Checking if the directory exists or not
+    if os.path.exists(directoryPath):
+        # Checking if the directory is empty or not
+        #if len(os.listdir(directoryPath)) == 0:
+        #    return False
+        return True
+    else:
+        return False
 
 try:
     # Open the file and load the file
@@ -30,11 +43,11 @@ except yaml.YAMLError:
 
 # Get config params
 chiaLocation = data['chia_location']
-plotPath = data['plots_path']
+plotDirectories = data['plot_directories']
 outputFile = data['report_output_file']
 healthPoint = float(data['health_point'])
-# Chia execute command
-plotTestCmd = [r"" + f'{chiaLocation}' + "", "plots", "check", "-g", f'{plotPath}']
+autoMove = data['auto_move']
+moveToDir = data['move_to_directory']
 ################################################## Function to catch ctrl-c
 # Handle ctr-c
 def signal_handler(sig, frame):
@@ -45,35 +58,39 @@ def signal_handler(sig, frame):
 ################################################## Function to catch ctrl-c => End
 def durationTime():
     duration = datetime.now() - startTime
-    print('Run in', duration)
+    print('Total time >>>', duration)
     print("*****************************")
 
-################################################## Main function
-if __name__ == '__main__':
-    signal.signal(signal.SIGINT, signal_handler)
+def doCheck(dir, outputFile_):
+    # Chia execute command
+    plotTestCmd = ''
+    # If not set plot_directories, check all
+    if (not(dir and dir.strip())):
+        plotTestCmd = [r"" + f'{chiaLocation}', "plots", "check"]
+    else:
+        plotTestCmd = [r"" + f'{chiaLocation}', "plots", "check", "-g", f'{dir}']
 
-    startTime = datetime.now()
-    # print (plotTestCmd)
-    res = sp.Popen(plotTestCmd, shell=True, stdout=sp.PIPE, stderr=sp.STDOUT)
-    # Open file to output
-    outputFile_ = open(f'{outputFile}', 'w', encoding='UTF8')
+    print ("Testing directory >>>", dir)
     plotFilePath = ''
+    plotCount = 0
+    res = sp.Popen(plotTestCmd, shell=True, stdout=sp.PIPE, stderr=sp.STDOUT)
     for line in res.stdout.readlines():
         if not line:
             break
         # Convert byte to String
-        s = line.decode('utf-8').strip()
+        strLine = line.decode('utf-8').strip()
         # Step1: Get file path
-        strIndex = s.find('Testing plot')
+        strIndex = strLine.find('Testing plot')
         if strIndex != -1:
-            plotFilePath = s[strIndex:].replace('k=32', '').replace('[0m', '').strip()
+            plotFilePath = strLine[strIndex:].replace('k=32', '').replace('[0m', '').strip()
         # Step2: Get Proofs
-        strIndex = s.find('Proofs')
+        strIndex = strLine.find('Proofs')
         if strIndex != -1:
-            proofsLine = s[strIndex:].replace('k=32', '').replace('[0m', '').strip()
+            proofsLine = strLine[strIndex:].replace('k=32', '').replace('[0m', '').strip()
             point = float(proofsLine.split(',')[1].strip())
             if point < healthPoint:
-                print (plotFilePath)
+                plotCount += 1
+                print ("#{0}: {1}".format(plotCount, plotFilePath))
                 print (proofsLine)
                 # write plot file
                 outputFile_.write(plotFilePath)
@@ -81,7 +98,31 @@ if __name__ == '__main__':
                 # write Proofs
                 outputFile_.write(proofsLine)
                 outputFile_.write('\n')
+                try:
+                    if autoMove == True:
+                        if isValidDirectory(moveToDir):
+                            plotFile = plotFilePath.split('Testing plot')[1].strip()
+                            print('Move file {0} to {1}'.format(plotFile, moveToDir))
+                            plotNewPath = shutil.move(plotFile, moveToDir)
+                            print(plotNewPath)
+                        else:
+                            print('Invalid directory %s' % moveToDir)
+                except shutil.Error:
+                    print('Error to remove file %s' % plotFile) 
                 plotFilePath = ''
-    outputFile_.close()
+    print('Found {0} plots in {1}'.format(plotCount, moveToDir))
     res.stdout.close()
+################################################## Main function
+if __name__ == '__main__':
+    signal.signal(signal.SIGINT, signal_handler)
+
+    startTime = datetime.now()
+    # Open file to output
+    outputFile_ = open(f'{outputFile}', 'w', encoding='UTF8')
+    for dir in plotDirectories:
+        if isValidDirectory(dir):
+            doCheck(dir, outputFile_)
+        else:
+            print('Directory not exist', dir)
+    outputFile_.close()
     durationTime()
