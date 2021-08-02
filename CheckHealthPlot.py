@@ -30,6 +30,8 @@ def isValidDirectory(directoryPath):
         #    return False
         return True
     else:
+        if os.path.isfile(directoryPath):
+            return True
         return False
 
 try:
@@ -106,16 +108,19 @@ def doCheck(dir, outputFile_):
                             plotNewPath = shutil.move(plotFile, moveToDir)
                             print(plotNewPath)
                         else:
-                            print('Invalid directory %s' % moveToDir)
+                            print('Directory %s is not exist' % moveToDir)
                 except shutil.Error:
                     print('Error to remove file %s' % plotFile) 
                 plotFilePath = ''
-    print('Found {0} plots in {1}'.format(plotCount, moveToDir))
+    print('Found {0} plots in {1}'.format(plotCount, dir))
     res.stdout.close()
 ################################################## Main function
 if __name__ == '__main__':
     signal.signal(signal.SIGINT, signal_handler)
 
+    if isValidDirectory(chiaLocation) == False:
+        print('File %s is not exist' % chiaLocation)
+        sys.exit(0)
     startTime = datetime.now()
     # Open file to output
     outputFile_ = open(f'{outputFile}', 'w', encoding='UTF8')
@@ -123,6 +128,6 @@ if __name__ == '__main__':
         if isValidDirectory(dir):
             doCheck(dir, outputFile_)
         else:
-            print('Directory not exist', dir)
+            print('Directory %s is not exist' % dir)
     outputFile_.close()
     durationTime()
