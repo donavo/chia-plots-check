@@ -1,11 +1,12 @@
 # WINDOWS EXAMPLE: C:\Users\Son Vo\AppData\Local\chia-blockchain\app-1.2.3\resources\app.asar.unpacked\daemon\chia.exe
 # LINUX EXAMPLE: /usr/lib/chia-blockchain/resources/app.asar.unpacked/daemon/chia
-chia_location: C:\Users\lam-son\AppData\Local\chia-blockchain\app-1.2.3\resources\app.asar.unpacked\daemon\chia.exe
+chia_location: C:\Users\Son Vo\AppData\Local\chia-blockchain\app-1.2.3\resources\app.asar.unpacked\daemon\chia.exe
 plot_directories:
-- E:\Temp\final
 - S:\final
-report_output_file: output.txt
-# *******************************************************
+- F:\final
+report_output_file1: report_plot_output_bad.txt
+report_output_file2: report_plot_output_good.txt
+#********************************************************
 # Proofs found Health Point - HP
 #
 # Good health: HP >= 0.8. Set health_point = 0.8
@@ -13,10 +14,18 @@ report_output_file: output.txt
 # Bad health : HP < 0.7. Set health_point = 0.7
 #********************************************************
 health_point: 0.7
-# *******************************************************
-# auto_move mode: [True/Yes,False/No]
-# Yes: move to directory
-# No: nothing
 #********************************************************
+# -n represents the number of challenges given.
+# https://github.com/Chia-Network/chia-blockchain/wiki/CLI-Commands-Reference#check
+#********************************************************
+challenges: 30
+#********************************************************
+# auto_delete mode: [True/Yes,False/No]
+# auto_move mode: [True/Yes,False/No]
+# Yes: delete or move to directory
+# No: nothing
+# If auto_delete = Yes. You ignore auto_move mode
+#********************************************************
+auto_delete: No
 auto_move: No
 move_to_directory: E:\Temp\move_to_dir

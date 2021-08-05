@@ -46,8 +46,10 @@ except yaml.YAMLError:
 # Get config params
 chiaLocation = data['chia_location']
 plotDirectories = data['plot_directories']
-outputFile = data['report_output_file']
+badPlotFile = data['report_output_file1']
+goodPlotFile = data['report_output_file2']
 healthPoint = float(data['health_point'])
+challenges = data['challenges']
 autoMove = data['auto_move']
 moveToDir = data['move_to_directory']
 ################################################## Function to catch ctrl-c
@@ -63,17 +65,17 @@ def durationTime():
     print('Total time >>>', duration)
     print("*****************************")
 
-def doCheck(dir, outputFile_):
+def doCheck(dir, badPlotFileOutput_, goodPlotFileOutput_):
     # Chia execute command
     plotTestCmd = ''
     # If not set plot_directories, check all
     if (not(dir and dir.strip())):
-        plotTestCmd = [r"" + f'{chiaLocation}', "plots", "check"]
+        plotTestCmd = [r"" + f'{chiaLocation}', "plots", "check", "-n", f'{challenges}']
     else:
-        plotTestCmd = [r"" + f'{chiaLocation}', "plots", "check", "-g", f'{dir}']
+        plotTestCmd = [r"" + f'{chiaLocation}', "plots", "check", "-n", f'{challenges}', "-g", f'{dir}']
 
-    print ("Testing directory >>>", dir)
-    plotFilePath = ''
+    print ("Run command >>>", plotTestCmd)
+    filePathLine = ''
     plotCount = 0
     res = sp.Popen(plotTestCmd, shell=True, stdout=sp.PIPE, stderr=sp.STDOUT)
     for line in res.stdout.readlines():
@@ -84,35 +86,45 @@ def doCheck(dir, outputFile_):
         # Step1: Get file path
         strIndex = strLine.find('Testing plot')
         if strIndex != -1:
-            plotFilePath = strLine[strIndex:].replace('k=32', '').replace('[0m', '').strip()
+            filePathLine = strLine[strIndex:].replace('k=32', '').replace('[0m', '').strip()
         # Step2: Get Proofs
         strIndex = strLine.find('Proofs')
         if strIndex != -1:
             proofsLine = strLine[strIndex:].replace('k=32', '').replace('[0m', '').strip()
+        if (strIndex != -1) and (filePathLine and filePathLine.strip()):
             point = float(proofsLine.split(',')[1].strip())
+            plotFileName = filePathLine.split('Testing plot')[1].strip()
             if point < healthPoint:
                 plotCount += 1
-                print ("#{0}: {1}".format(plotCount, plotFilePath))
+                print ("Found {0}: {1}".format(plotCount, plotFileName))
                 print (proofsLine)
                 # write plot file
-                outputFile_.write(plotFilePath)
-                outputFile_.write('\n')
+                badPlotFileOutput_.write(plotFileName)
+                badPlotFileOutput_.write('\n')
                 # write Proofs
-                outputFile_.write(proofsLine)
-                outputFile_.write('\n')
+                badPlotFileOutput_.write(proofsLine)
+                badPlotFileOutput_.write('\n')
                 try:
                     if autoMove == True:
                         if isValidDirectory(moveToDir):
-                            plotFile = plotFilePath.split('Testing plot')[1].strip()
-                            print('Move file {0} to {1}'.format(plotFile, moveToDir))
-                            plotNewPath = shutil.move(plotFile, moveToDir)
+                            print('Move file {0} to {1}'.format(plotFileName, moveToDir))
+                            plotNewPath = shutil.move(plotFileName, moveToDir)
                             print(plotNewPath)
                         else:
                             print('Directory %s is not exist' % moveToDir)
                 except shutil.Error:
-                    print('Error to remove file %s' % plotFile) 
-                plotFilePath = ''
-    print('Found {0} plots in {1}'.format(plotCount, dir))
+                    print('Error to remove file %s' % plotFileName) 
+            else:
+                # write plot file
+                goodPlotFileOutput_.write(plotFileName)
+                goodPlotFileOutput_.write('\n')
+                # write Proofs
+                goodPlotFileOutput_.write(proofsLine)
+                goodPlotFileOutput_.write('\n')
+    
+    print('Found {0} plots'.format(plotCount))
+    badPlotFileOutput_.write('Found {0} plots'.format(plotCount))
+    badPlotFileOutput_.write('\n')
     res.stdout.close()
 ################################################## Main function
 if __name__ == '__main__':
@@ -123,11 +135,15 @@ if __name__ == '__main__':
         sys.exit(0)
     startTime = datetime.now()
     # Open file to output
-    outputFile_ = open(f'{outputFile}', 'w', encoding='UTF8')
+    badPlotFileOutput_ = open(f'{badPlotFile}', 'w', encoding='UTF8')
+    goodPlotFileOutput_ = open(f'{goodPlotFile}', 'w', encoding='UTF8')
     for dir in plotDirectories:
-        if isValidDirectory(dir):
-            doCheck(dir, outputFile_)
+        if dir is None:
+            doCheck('', badPlotFileOutput_, goodPlotFileOutput_)
         else:
-            print('Directory %s is not exist' % dir)
-    outputFile_.close()
+            if isValidDirectory(dir):
+                doCheck(dir, badPlotFileOutput_, goodPlotFileOutput_)
+            else:
+                print('Directory %s is not exist' % dir)
+    badPlotFileOutput_.close()
     durationTime()
