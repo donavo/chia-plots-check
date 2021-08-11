@@ -3,7 +3,8 @@
 # Author: son-vo
 # Version:
 # 0.1: Check health plot
-# 0.1.1: Add feature move plot file to backup folder
+# 0.1.1: Add feature move bad plot file to backup folder
+# 0.1.2: Add feature auto delete bad plot file
 ##################################################
 # Check and output health of plots
 # Requirement: install pyyaml
@@ -50,6 +51,7 @@ badPlotFile = data['report_output_file1']
 goodPlotFile = data['report_output_file2']
 healthPoint = float(data['health_point'])
 challenges = data['challenges']
+autoDelete = data['auto_delete']
 autoMove = data['auto_move']
 moveToDir = data['move_to_directory']
 ################################################## Function to catch ctrl-c
@@ -83,6 +85,10 @@ def doCheck(dir, badPlotFileOutput_, goodPlotFileOutput_):
             break
         # Convert byte to String
         strLine = line.decode('utf-8').strip()
+        if autoDelete == True:
+            if isValidDirectory('E:/Temp/test/test.plot') == True:
+                os.remove('E:/Temp/test/test.plot')
+                print("%s has been deleted." % 'E:/Temp/test/test.plot')
         # Step1: Get file path
         strIndex = strLine.find('Testing plot')
         if strIndex != -1:
@@ -105,15 +111,20 @@ def doCheck(dir, badPlotFileOutput_, goodPlotFileOutput_):
                 badPlotFileOutput_.write(proofsLine)
                 badPlotFileOutput_.write('\n')
                 try:
-                    if autoMove == True:
-                        if isValidDirectory(moveToDir):
-                            print('Move file {0} to {1}'.format(plotFileName, moveToDir))
-                            plotNewPath = shutil.move(plotFileName, moveToDir)
-                            print(plotNewPath)
-                        else:
-                            print('Directory %s is not exist' % moveToDir)
+                    if autoDelete == True:
+                        if isValidDirectory(plotFileName) == True:
+                            os.remove(plotFileName)
+                            print("%s has been deleted." % plotFileName)
+                    else:
+                        if autoMove == True:
+                            if isValidDirectory(moveToDir):
+                                print('Move file {0} to {1}'.format(plotFileName, moveToDir))
+                                plotNewPath = shutil.move(plotFileName, moveToDir)
+                                print(plotNewPath)
+                            else:
+                                print('Directory %s is not exist' % moveToDir)
                 except shutil.Error:
-                    print('Error to remove file %s' % plotFileName) 
+                    print('File Processing Error: %s' % plotFileName) 
             else:
                 # write plot file
                 goodPlotFileOutput_.write(plotFileName)

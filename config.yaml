@@ -1,9 +1,8 @@
 # WINDOWS EXAMPLE: C:\Users\Son Vo\AppData\Local\chia-blockchain\app-1.2.3\resources\app.asar.unpacked\daemon\chia.exe
 # LINUX EXAMPLE: /usr/lib/chia-blockchain/resources/app.asar.unpacked/daemon/chia
-chia_location: C:\Users\Son Vo\AppData\Local\chia-blockchain\app-1.2.3\resources\app.asar.unpacked\daemon\chia.exe
+chia_location: E:\Blockchain\ChiaForks\chia-blockchain\app-1.2.3\resources\app.asar.unpacked\daemon\chia.exe
 plot_directories:
-- S:\final
-- F:\final
+- E:\Temp\test
 report_output_file1: report_plot_output_bad.txt
 report_output_file2: report_plot_output_good.txt
 #********************************************************
@@ -26,6 +25,6 @@ challenges: 30
 # No: nothing
 # If auto_delete = Yes. You ignore auto_move mode
 #********************************************************
-auto_delete: No
+auto_delete: Yes
 auto_move: No
 move_to_directory: E:\Temp\move_to_dir
