@@ -85,10 +85,6 @@ def doCheck(dir, badPlotFileOutput_, goodPlotFileOutput_):
             break
         # Convert byte to String
         strLine = line.decode('utf-8').strip()
-        if autoDelete == True:
-            if isValidDirectory('E:/Temp/test/test.plot') == True:
-                os.remove('E:/Temp/test/test.plot')
-                print("%s has been deleted." % 'E:/Temp/test/test.plot')
         # Step1: Get file path
         strIndex = strLine.find('Testing plot')
         if strIndex != -1:
