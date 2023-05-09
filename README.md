@@ -24,7 +24,3 @@ Release version: https://github.com/donavo/chia-plots-check/releases
 
 ## How to Support
 XCH: xch1qu4asrccqr7qdh3knltpr7vg3q9urgfcf93v0rze2vy88wc58xjqs0kex9
-
-XFX: xfx1yt5hx4tzvcpqvafsqrkwljw43zl4ca8acura7qc8ck7eg2ykvlpsh50ffu
-
-XDG: xdg1gw8l50j82mvt4tyacdfgqtrhgp3y6z47xq2665gkewg0anal34zqk09fex
